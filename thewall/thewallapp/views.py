@@ -91,7 +91,7 @@ class comment_detail(APIView):
 
 
 class profile_create(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,custompermissions.AnonTriesToSuperUser)
 
     def post(self, request):
         serializer = ProfileSerializer(data=request.data)
@@ -101,7 +101,7 @@ class profile_create(APIView):
                                 welcome_message)
             profile = serializer.save()
             if profile:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response({'username':profile.username, 'email': profile.email}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 

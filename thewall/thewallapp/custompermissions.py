@@ -30,3 +30,13 @@ class IsSuperUser(permissions.BasePermission):
             return (request.user.is_superuser)
 
         return True
+
+class AnonTriesToSuperUser(permissions.BasePermission):
+    """
+    Permission that checks if an anonymous user is trying to create a superuser account
+    """
+
+    def has_permission(self, request, view):
+        if ('is_superuser') in request.data or ('is_staff') in request.data:
+            return False
+        return True
