@@ -33,7 +33,7 @@ class profile_detail_id(generics.RetrieveAPIView):
 
 class profile_detail(APIView):
     permission_classes = (
-    permissions.IsAuthenticatedOrReadOnly, custompermissions.IsProfileOwner, custompermissions.IsSuperUser)
+    permissions.IsAuthenticated, custompermissions.IsProfileOwner, custompermissions.IsSuperUser)
 
     def get_object(self, user_name):
         try:
@@ -52,8 +52,10 @@ class profile_detail(APIView):
         profile = self.get_object(user_name)
         serializer = ProfileSerializer(profile, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            mod_profile = serializer.save()
+            return_data = serializer.data
+            del return_data['password']
+            return Response(return_data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_name, format=None):
@@ -99,11 +101,13 @@ class profile_create(APIView):
         if serializer.is_valid():
             if settings.DEBUG == False: #don't send emails when testing
                 welcome_message = f'Hi {serializer.validated_data["username"]}! \n Welcome to The Wall!'
-                mailing.send_emails('noreply@thewallapp.com', serializer.validated_data['email'], 'Welcome!',
+                mailing.send_emails('noreply@thewallapp.com', serializer.validated_data['email'], 'Welcome to The Wall!',
                                     welcome_message)
             profile = serializer.save()
+            return_data = serializer.data
+            del return_data['password']
             if profile:
-                return Response({'username':profile.username, 'email': profile.email}, status=status.HTTP_201_CREATED)
+                return Response(return_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
