@@ -191,5 +191,15 @@ class ApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertEqual(modified_user1.username,'NaughtyAdmin')
 
+    def test_anon_tries_superuser(self):
+        data = {
+            'username': 'HackyAnon',
+            'password': 'supersecret3',
+            'email': 'registerbadsuperusertest@test.com',
+            'is_superuser': True
+        }
+
+        response = client.post('/register/', data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 

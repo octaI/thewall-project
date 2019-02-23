@@ -1,4 +1,5 @@
 # Create your views here.
+from django.conf import settings
 from django.http import Http404
 from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework import generics, permissions
@@ -44,7 +45,7 @@ class profile_detail(APIView):
 
     def get(self, request, user_name, format=None):
         profile = self.get_object(user_name)
-        serializer = ProfileSerializer(profile)
+        serializer = ProfileViewSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, user_name, format=None):
@@ -96,9 +97,10 @@ class profile_create(APIView):
     def post(self, request):
         serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
-            welcome_message = f'Hi {serializer.validated_data["username"]}! \n Welcome to The Wall!'
-            mailing.send_emails('noreply@thewallapp.com', serializer.validated_data['email'], 'Welcome!',
-                                welcome_message)
+            if settings.DEBUG == False: #don't send emails when testing
+                welcome_message = f'Hi {serializer.validated_data["username"]}! \n Welcome to The Wall!'
+                mailing.send_emails('noreply@thewallapp.com', serializer.validated_data['email'], 'Welcome!',
+                                    welcome_message)
             profile = serializer.save()
             if profile:
                 return Response({'username':profile.username, 'email': profile.email}, status=status.HTTP_201_CREATED)
