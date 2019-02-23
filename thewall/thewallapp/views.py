@@ -64,9 +64,8 @@ class profile_detail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class comment_list(generics.ListAPIView, generics.CreateAPIView):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
+class comment_list(generics.ListAPIView,generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, custompermissions.IsRealAuthor)
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 

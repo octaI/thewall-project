@@ -90,6 +90,17 @@ class ApiTests(TestCase):
         self.assertEqual(response.json()['content'],data['content'])
         client.force_authenticate(user=None)
 
+    def test_post_comment_authed_impersonate(self):
+        client.force_authenticate(self.user1)
+        data = {
+            'title': 'I want to be someone else',
+            'content': 'This is naughty',
+            'author_id': self.user1.id+1
+        }
+        response = client.post('/comments/', data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        client.force_authenticate(user=None)
+
     def test_failed_login(self):
         response = client.post('/login/',{'username': 'TestUser1','password':'wrongpass','grant_type': 'password'})
         self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)

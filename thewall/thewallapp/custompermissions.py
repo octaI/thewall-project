@@ -16,6 +16,17 @@ class IsProfileOwner(permissions.BasePermission):
             return True
         return (obj.id == request.user.id)
 
+class IsRealAuthor(permissions.BasePermission):
+    """
+    Permission that checks that the user who made the request is the real author of the comment
+    """
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.method == 'POST':
+            return (request.user.id == int(request.data['author_id'])) #using int() bc it's json string.
+
 
 class IsSuperUser(permissions.BasePermission):
     """
