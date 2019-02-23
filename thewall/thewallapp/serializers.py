@@ -15,6 +15,7 @@ class ProfileViewSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['id','username','email','first_name','last_name']
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True,validators=[UniqueValidator(queryset=Profile.objects.all())])
     username = serializers.CharField(required=True,max_length=150,validators=[UniqueValidator(queryset=Profile.objects.all())])

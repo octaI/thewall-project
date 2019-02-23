@@ -50,12 +50,10 @@ class profile_detail(APIView):
 
     def put(self, request, user_name, format=None):
         profile = self.get_object(user_name)
-        serializer = ProfileSerializer(profile, data=request.data)
+        serializer = ProfileViewSerializer(profile, data=request.data)
         if serializer.is_valid():
-            mod_profile = serializer.save()
-            return_data = serializer.data
-            del return_data['password']
-            return Response(return_data, status=status.HTTP_202_ACCEPTED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_name, format=None):

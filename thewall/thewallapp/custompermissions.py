@@ -25,7 +25,11 @@ class IsRealAuthor(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         if request.method == 'POST':
-            return (request.user.id == int(request.data['author_id'])) #using int() bc it's json string.
+            try:
+                author_id = int(request.data['author_id'])
+            except:
+                return False
+            return (request.user.id == author_id) #using int() bc it's json string.
 
 
 class IsSuperUser(permissions.BasePermission):
