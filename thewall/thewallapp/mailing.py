@@ -11,7 +11,7 @@ from sendgrid.helpers.mail import Mail, Content
 For this mailing module to work, you need to follow the next steps:
 1- Create a sendgrid account.
 2- Create an API Key for your application. The API Key requires, at least, Full access to Mail Send.
-3- Set the env variable 'SG_APIKEY' value to the API Key obtained in step 2a
+3- Set the env variable 'SG_APIKEY' value to the API Key obtained in step 2
 """
 
 def send_emails(from_email,to_email,subject,message):
