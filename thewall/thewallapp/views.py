@@ -25,39 +25,36 @@ class profile_list(generics.ListAPIView):
     serializer_class = ProfileViewSerializer
 
 
-class profile_detail_id(generics.RetrieveAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    queryset = Profile.objects.all()
-    serializer_class = ProfileViewSerializer
+
 
 
 class profile_detail(APIView):
     permission_classes = (
     permissions.IsAuthenticated, custompermissions.IsProfileOwner, custompermissions.IsSuperUser)
 
-    def get_object(self, user_name):
+    def get_object(self, user_id):
         try:
-            obj = Profile.objects.get(username=user_name)
+            obj = Profile.objects.get(pk=user_id)
             self.check_object_permissions(self.request, obj)
         except Profile.DoesNotExist:
             raise Http404
         return obj
 
-    def get(self, request, user_name, format=None):
-        profile = self.get_object(user_name)
+    def get(self, request, user_id, format=None):
+        profile = self.get_object(user_id)
         serializer = ProfileViewSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, user_name, format=None):
-        profile = self.get_object(user_name)
+    def put(self, request, user_id, format=None):
+        profile = self.get_object(user_id)
         serializer = ProfileViewSerializer(profile, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, user_name, format=None):
-        profile = self.get_object(user_name)
+    def delete(self, request, user_id, format=None):
+        profile = self.get_object(user_id)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

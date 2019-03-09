@@ -3,3 +3,4 @@ djangorestframework==3.9.1
 psycopg2
 django-oauth-toolkit
 sendgrid
+django-cors-headers

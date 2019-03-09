@@ -157,7 +157,7 @@ class ApiTests(TestCase):
             'password': 'notmypass',
             'email': 'icantdothat@test.com'
         }
-        response = client.put('/profile/'+self.user1.username,data)
+        response = client.put('/profile/'+str(self.user1.id),data)
         client.force_authenticate(user=None)
         self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
 
@@ -165,7 +165,7 @@ class ApiTests(TestCase):
     def test_user_delete_anotheruser_notsuperadmin(self):
         client.force_authenticate(user=self.user2)
 
-        response = client.delete('/profile/'+self.user1.username)
+        response = client.delete('/profile/'+str(self.user1.id))
         client.force_authenticate(user=None)
         self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
 
@@ -177,7 +177,7 @@ class ApiTests(TestCase):
             'password': 'supersecret2',
             'email': 'icandothat@test.com'
         }
-        response = client.put('/profile/' + self.user2.username, data)
+        response = client.put('/profile/' + str(self.user2.id), data)
         new_profile = Profile.objects.get(pk=self.user2.id)
         client.force_authenticate(user=None)
         self.assertEqual(response.status_code,status.HTTP_202_ACCEPTED)
@@ -185,7 +185,7 @@ class ApiTests(TestCase):
 
     def test_user_delete_itself(self):
         client.force_authenticate(user=self.user2)
-        response = client.delete('/profile/' + self.user2.username)
+        response = client.delete('/profile/' + str(self.user2.id))
         client.force_authenticate(user=None)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -196,7 +196,7 @@ class ApiTests(TestCase):
             'password': 'changedhispass',
             'email': 'icandothat@test.com'
         }
-        response = client.put('/profile/' + self.user1.username, data)
+        response = client.put('/profile/' + str(self.user1.id), data)
         client.force_authenticate(user=None)
         modified_user1 = Profile.objects.get(pk=self.user1.id)
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)

@@ -25,8 +25,7 @@ if settings.DEBUG: #only accessible when in DEBUG mode
 
 urlpatterns = [
     path('profiles/', views.profile_list.as_view()),
-    path('profile/<str:user_name>',views.profile_detail.as_view()),
-    path('profile/id/<int:pk>',views.profile_detail_id.as_view()),
+    path('profile/<int:user_id>',views.profile_detail.as_view()),
     path('comments/',csrf_exempt(views.comment_list.as_view())),
     path('comment/<int:comment_id>',csrf_exempt(views.comment_detail.as_view())),
     path('register/',views.profile_create.as_view()),
