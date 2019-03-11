@@ -6,6 +6,8 @@ from rest_framework.validators import UniqueValidator
 
 class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.ReadOnlyField(source='author_id.username')
+    content=serializers.CharField(min_length=10)
+    title=serializers.CharField(min_length=8)
     class Meta:
         model = Comment
         fields = ['posted', 'title', 'content', 'author_id','author_name', 'comment_id']

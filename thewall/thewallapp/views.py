@@ -110,17 +110,23 @@ class profile_login(APIView):
 
     def post(self, request):
         try:
-            username = request.data['username']
             grant_type = request.data['grant_type']
-            password = request.data['password']
-            data = {'username': username,
-                    'grant_type': grant_type,
-                    'password': password,
-                    'client_id': os.environ['CLIENT_ID'],
-                    'client_secret': os.environ['CLIENT_SECRET']}
         except MultiValueDictKeyError:
-            return Response({'detail': 'Badly built request. Required fields: username, grant_type, password'},
-                            status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+            return Response({'detail': 'Badly built request. grant_type field required'},
+                            status=status.HTTP_400_BAD_REQUEST,content_type='application/json')
+
+        data = {'grant_type': grant_type,
+                'client_id': os.environ['CLIENT_ID'],
+                'client_secret': os.environ['CLIENT_SECRET']}
+
+        if (grant_type == 'password'):
+            try:
+                username = request.data['username']
+                password = request.data['password']
+                data = {**data, 'username': username, 'password': password}
+            except MultiValueDictKeyError:
+                return Response({'detail': 'Badly built request. Required fields: username, password'},
+                                status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
         if grant_type == 'refresh_token':
             try:
                 data['refresh_token'] = request.data['refresh_token']
@@ -129,4 +135,9 @@ class profile_login(APIView):
         new_req = factory.post('/o/token.json', data)
         accestoken_view = TokenView.as_view()
         response = accestoken_view(new_req)
+        if (response.status_code == status.HTTP_200_OK and grant_type=='password'): #append user_data on first login
+            user_data = Profile.objects.get(username=username)
+            user_dict = {'user_data': {'id': user_data.id,'username': user_data.username,'email': user_data.email,
+                                       'first_name': user_data.first_name,'last_name': user_data.last_name}}
+            response.content = json.dumps({**json.loads(response.content),**user_dict})
         return response
