@@ -25,6 +25,17 @@ class profile_list(generics.ListAPIView):
     serializer_class = ProfileViewSerializer
 
 
+class username_unique(APIView):
+    permission_classes=(permissions.AllowAny,)
+    def get(self,request):
+        username = self.request.query_params.get('username')
+        try:
+            obj = Profile.objects.get(username=username)
+        except Profile.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)
+        return Response({'detail': 'Username already exists'},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
 
 
 
