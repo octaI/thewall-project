@@ -29,9 +29,8 @@ class username_unique(APIView):
     permission_classes=(permissions.AllowAny,)
     def get(self,request):
         username = self.request.query_params.get('username')
-        try:
-            obj = Profile.objects.get(username=username)
-        except Profile.DoesNotExist:
+        obj = Profile.objects.filter(username__iexact=username)
+        if not obj.exists():
             return Response(status=status.HTTP_200_OK)
         return Response({'detail': 'Username already exists'},status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -134,10 +133,15 @@ class profile_login(APIView):
             try:
                 username = request.data['username']
                 password = request.data['password']
-                data = {**data, 'username': username, 'password': password}
             except MultiValueDictKeyError:
                 return Response({'detail': 'Badly built request. Required fields: username, password'},
                                 status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+            try:
+                user_data = Profile.objects.get(username__iexact=username) #get the user data
+            except Profile.DoesNotExist:
+                return Response({'detail': f'Username {username} does not exist'}, status=status.HTTP_404_NOT_FOUND,content_type='application/json')
+            data = {**data, 'username': user_data.username, 'password': password}
+
         if grant_type == 'refresh_token':
             try:
                 data['refresh_token'] = request.data['refresh_token']
@@ -147,7 +151,6 @@ class profile_login(APIView):
         accestoken_view = TokenView.as_view()
         response = accestoken_view(new_req)
         if (response.status_code == status.HTTP_200_OK and grant_type=='password'): #append user_data on first login
-            user_data = Profile.objects.get(username=username)
             user_dict = {'user_data': {'id': user_data.id,'username': user_data.username,'email': user_data.email,
                                        'first_name': user_data.first_name,'last_name': user_data.last_name}}
             response.content = json.dumps({**json.loads(response.content),**user_dict})

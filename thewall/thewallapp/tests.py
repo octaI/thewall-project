@@ -118,6 +118,13 @@ class ApiTests(TestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
         self.assertIsNotNone(response.json()['access_token'])
         self.assertIsNotNone(response.json()['refresh_token'])
+        response = client.post('/login/',
+                               {'username': 'testuser1', 'password': 'supersecret1', 'grant_type': 'password',
+                                'client_id': os.environ['CLIENT_ID'],
+                                'client_secret': os.environ['CLIENT_SECRET']})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(response.json()['access_token'])
+        self.assertIsNotNone(response.json()['refresh_token'])
     def test_successful_token_refresh(self):
         response = client.post('/login/',{'username': 'TestUser1','password':'supersecret1','grant_type': 'password','client_id': self.application.client_id,
                                            'client_secret': self.application.client_secret})
@@ -150,6 +157,15 @@ class ApiTests(TestCase):
         response = client.post('/register/',data)
         self.assertEqual(response.status_code,status.HTTP_406_NOT_ACCEPTABLE)
 
+    def test_duplicated_registration_case_insensitive(self):
+        data = {
+            'username': 'testuser1',
+            'password': 'supersecret3',
+            'email': 'registertest@test.com'
+        }
+        response = client.post('/register/',data)
+        self.assertEqual(response.status_code,status.HTTP_406_NOT_ACCEPTABLE)
+
     def test_user_modify_anotheruser_notsuperadmin(self):
         client.force_authenticate(user=self.user2)
         data = {
@@ -160,6 +176,18 @@ class ApiTests(TestCase):
         response = client.put('/profile/'+str(self.user1.id),data)
         client.force_authenticate(user=None)
         self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
+
+    def test_user_modify_onefield(self):
+        client.force_authenticate(user=self.user2)
+        newname = 'GoodUser'
+        data = {
+            'username': newname,
+        }
+        response = client.put('/profile/' + str(self.user2.id), data)
+        new_profile = Profile.objects.get(pk=self.user2.id)
+        client.force_authenticate(user=None)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(new_profile.username, newname)
 
 
     def test_user_delete_anotheruser_notsuperadmin(self):
@@ -174,7 +202,6 @@ class ApiTests(TestCase):
         newname = 'GoodUser'
         data = {
             'username': newname,
-            'password': 'supersecret2',
             'email': 'icandothat@test.com'
         }
         response = client.put('/profile/' + str(self.user2.id), data)

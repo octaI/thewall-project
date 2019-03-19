@@ -5,7 +5,6 @@ from django.db import models
 # Create your models here.
 
 class Profile(AbstractUser):
-    pass
 
     class Meta:
         ordering = ('id',)
