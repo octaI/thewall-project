@@ -65,6 +65,11 @@ class ApiTests(TestCase):
         self.user1.delete()
         self.user2.delete()
 
+    def test_username_uniqueness_endpoint_check(self):
+        response = client.get('/username/check?username=testuser1')
+        self.assertEqual(response.status_code,status.HTTP_406_NOT_ACCEPTABLE)
+        another_response = client.get('/username/check?username=thisuserisnotused')
+        self.assertEqual(another_response.status_code,status.HTTP_200_OK)
 
     def test_get_comments_unauthed(self):
         response = client.get('/comments/')
