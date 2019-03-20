@@ -8,5 +8,4 @@ services:
 install:
   - touch varsettings.env
 script:
-  - docker-compose up -d
-  - docker exec -ti thewallproject_web_1 bash -c "cd thewall;python3 manage.py test"
+  - docker-compose up -d && docker exec -ti thewallproject_web_1 bash -c "cd thewall;python3 manage.py test"
