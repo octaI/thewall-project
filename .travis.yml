@@ -1,11 +1,14 @@
 language: python
+python:
+   - "3.6"
 
 services:
   - docker
 
-before_install:
+install:
   - touch varsettings.env
-  - sudo ls
+  - echo "SECRET_KEY=Thisisatestkey" >> varsettings.env
+  - echo "DEBUG=True" >> varsettings.env
   - docker-compose up -d
 script:
-  - docker exec thewallproject_web_1 /bin/sh -c "cd thewall;python3 manage.py test"
+  - docker exec -ti thewallproject_web_1 bash -c "cd thewall;python3 manage.py makemigrations thewallapp;python3 manage.py migrate;python3 manage.py test"
