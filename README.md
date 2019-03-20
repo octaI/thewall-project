@@ -3,4 +3,4 @@
 # thewall-project
 Repository for "The Wall" app
 
-To install and run this app, read the [Wiki](https://github.com/octaI/thewall-project/wiki)
+To install and run this app, read the [Wiki](https://github.com/octaI/thewall-project/wiki/First-Time-Run)
