@@ -7,7 +7,7 @@ services:
     build: .
     env_file:
       - varsettings.env
-    command: python3 thewall/manage.py runserver 0.0.0.0:8000
+    command: bash -c "python3 thewall/manage.py makemigrations thewallapp && python3 thewall/manage.py migrate && python3 thewall/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
