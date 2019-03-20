@@ -71,6 +71,12 @@ class ApiTests(TestCase):
         another_response = client.get('/username/check?username=thisuserisnotused')
         self.assertEqual(another_response.status_code,status.HTTP_200_OK)
 
+    def test_email_uniqueness_endpoint_check(self):
+        response = client.get('/email/check?email=test1@test.com')
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        another_response = client.get('/email/check?email=anothermail@test.com')
+        self.assertEqual(another_response.status_code, status.HTTP_200_OK)
+
     def test_get_comments_unauthed(self):
         response = client.get('/comments/')
         json_resp = response.json()

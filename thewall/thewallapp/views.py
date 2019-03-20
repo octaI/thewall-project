@@ -31,8 +31,17 @@ class username_unique(APIView):
         username = self.request.query_params.get('username')
         obj = Profile.objects.filter(username__iexact=username)
         if not obj.exists():
-            return Response(status=status.HTTP_200_OK)
+            return Response({},status=status.HTTP_200_OK)
         return Response({'detail': 'Username already exists'},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+class email_unique(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def get(self,request):
+        email = self.request.query_params.get('email')
+        obj = Profile.objects.filter(email__iexact=email)
+        if not obj.exists():
+            return Response({},status=status.HTTP_200_OK)
+        return Response({'detail': 'Email is already in use'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 
