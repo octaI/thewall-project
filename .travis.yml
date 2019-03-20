@@ -1,10 +1,11 @@
 language: python
-python: 3.7
 
 services:
   - docker
 
 before_install:
+  - sudo apt-get update
+  - sudo apt-get install python3
   - touch varsettings.env
   - sudo ls
   - docker-compose up -d
