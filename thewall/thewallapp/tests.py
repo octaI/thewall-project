@@ -56,7 +56,7 @@ class ApiTests(TestCase):
         self.application.save()
         oauth2_settings._SCOPES = ['read', 'write']
 
-        os.environ['DEBUG'] = True
+        os.environ['DEBUG'] = 'True'
 
         os.environ['CLIENT_ID'] = self.application.client_id
         os.environ['CLIENT_SECRET'] = self.application.client_secret
