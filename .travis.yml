@@ -1,8 +1,5 @@
 language: python
 python:
-   - "3.3"
-   - "3.4"
-   - "3.5"
    - "3.6"
 
 services:
@@ -12,7 +9,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install python3
   - touch varsettings.env
-  - sudo ls
   - docker-compose up -d
+  - docker ps 
 script:
   - docker exec thewallproject_web_1 /bin/sh -c "cd thewall;python3 manage.py test"
