@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.models import get_access_token_model,get_application_model
 
@@ -56,7 +57,7 @@ class ApiTests(TestCase):
         self.application.save()
         oauth2_settings._SCOPES = ['read', 'write']
 
-        os.environ['DEBUG'] = 'True'
+        settings.DEBUG = True
 
         os.environ['CLIENT_ID'] = self.application.client_id
         os.environ['CLIENT_SECRET'] = self.application.client_secret
