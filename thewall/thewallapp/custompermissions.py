@@ -1,6 +1,5 @@
 from rest_framework import permissions
 
-from .models import Profile
 
 
 class IsProfileOwner(permissions.BasePermission):
