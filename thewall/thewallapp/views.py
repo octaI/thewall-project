@@ -112,7 +112,7 @@ class profile_create(APIView):
     def post(self, request):
         serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
-            if settings.DEBUG == False: #don't send emails when testing
+            if settings.DEBUG == True: #don't send emails when testing
                 welcome_message = f'Hi {serializer.validated_data["username"]}! \n Welcome to The Wall!'
                 mailing.send_emails('noreply@thewallapp.com', serializer.validated_data['email'], 'Welcome to The Wall!',
                                     welcome_message)
