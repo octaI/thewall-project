@@ -9,5 +9,6 @@ install:
   - touch varsettings.env
   - echo "SECRET_KEY=Thisisatestkey" >> varsettings.env
   - echo "DEBUG=True" >> varsettings.env
+  - docker compose-up -d
 script:
-  - docker-compose up  && docker exec -ti thewallproject_web_1 bash -c "cd thewall;python3 manage.py test"
+  - docker exec -ti thewallproject_web_1 bash -c "cd thewall;python3 manage.py test"
