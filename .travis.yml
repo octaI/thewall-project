@@ -6,6 +6,7 @@ services:
 before_install:
   - docker-compose up -d
   - touch varsettings.env
+  - sudo ls
 
 script:
   - docker exec thewallproject_web_1 /bin/sh -c "cd thewall;python3 manage.py test"
